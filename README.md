@@ -9,7 +9,7 @@ A generic serverless AgentCore backend you can fork and build on. Provides a str
 ## One-time setup
 
 ### Prerequisites
-- Python 3.11+, Node.js 18+, Docker Desktop
+- Python 3.11+, Node.js 22+, Docker Desktop
 - AWS CLI configured (`aws configure sso`)
 
 ### AWS setup
