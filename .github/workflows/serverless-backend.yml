@@ -8,6 +8,10 @@ on:
       - '.github/workflows/serverless-backend.yml'
   workflow_dispatch:
 
+concurrency:
+  group: deploy-serverless-backend
+  cancel-in-progress: false
+
 env:
   AWS_REGION: eu-west-1
   STAGE: prod
