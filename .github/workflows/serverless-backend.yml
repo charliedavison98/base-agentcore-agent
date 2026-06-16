@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'cdk/**'
+      - 'agent/**'
       - '.github/workflows/serverless-backend.yml'
   workflow_dispatch:
 

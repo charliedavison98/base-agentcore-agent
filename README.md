@@ -1,6 +1,6 @@
 # AgentCore Chatbot Backend
 
-A generic serverless AgentCore backend you can fork and build on. Provides a streaming chat API, Cognito auth, long-term memory, and Bedrock guardrails out of the box. Customise the prompt and tools in `cdk/agent-code/` to build your own agent.
+A generic serverless AgentCore backend you can fork and build on. Provides a streaming chat API, Cognito auth, long-term memory, and Bedrock guardrails out of the box. Customise the prompt and tools in `agent/` to build your own agent.
 
 **Stack:** AgentCore runtime (Docker) · API Gateway · Cognito · CDK (Python) · GitHub Actions (OIDC)
 
@@ -13,7 +13,7 @@ A generic serverless AgentCore backend you can fork and build on. Provides a str
 - AWS CLI configured (`aws configure sso`)
 
 ### AWS setup
-1. **Enable Bedrock model access** for the model in `cdk/agent-code/agent.py` (Claude Sonnet 4) in your target region via the AWS console.
+1. **Enable Bedrock model access** for the model in `agent/agent.py` (Claude Sonnet 4) in your target region via the AWS console.
 
 2. **Bootstrap CDK** (once per account/region):
 ```bash

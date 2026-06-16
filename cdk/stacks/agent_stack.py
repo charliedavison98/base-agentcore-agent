@@ -33,7 +33,7 @@ class AgentStack(NestedStack):
         agent_image = ecr_assets.DockerImageAsset(
             self,
             "AgentImage",
-            directory="agent-code",
+            directory="../agent",
             platform=ecr_assets.Platform.LINUX_ARM64,
         )
         
