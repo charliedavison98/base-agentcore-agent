@@ -25,11 +25,9 @@ The workflow at `.github/workflows/serverless-backend.yml` deploys on push to `m
 
 1. **Create the IAM role** using the provided script (minimum permissions — the role can only assume CDK bootstrap roles):
    ```bash
-   ./scripts/create-github-actions-role.sh \
-     --repo your-org/your-repo \
-     --region eu-west-1
+   ./scripts/create-github-actions-role.sh --region eu-west-1
    ```
-   The script prints the role ARN when done.
+   The repo is auto-detected from `git remote origin`. The role is named `github-actions-<repo-name>`. The script prints the ARN when done.
 2. **Add secret** `AWS_ROLE_ARN` in your GitHub repo settings → Secrets.
 3. **Set your region and stage** in the workflow:
 ```yaml
