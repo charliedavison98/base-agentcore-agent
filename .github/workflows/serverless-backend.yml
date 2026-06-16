@@ -1,0 +1,74 @@
+name: Deploy Serverless Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cdk/**'
+      - '.github/workflows/serverless-backend.yml'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-west-1
+  STAGE: prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install AWS CDK
+        run: npm install -g aws-cdk
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-ServerlessBackend
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Install CDK dependencies
+        run: |
+          cd cdk
+          pip install -r requirements.txt
+
+      - name: Install streaming lambda dependencies
+        run: npm ci
+        working-directory: cdk/lambda_functions/chat_streaming_node
+
+      - name: Deploy Serverless Stack
+        run: |
+          cd cdk
+          cdk deploy SimpleChatbot-${{ env.STAGE }} --context stage=${{ env.STAGE }} --require-approval never
+
+      - name: Get stack outputs
+        id: outputs
+        run: |
+          cd cdk
+          STACK_NAME=SimpleChatbot-${{ env.STAGE }}
+          echo "api_url=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`ApiGatewayUrl`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+          echo "user_pool_id=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`UserPoolId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+          echo "user_pool_client_id=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`UserPoolClientId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+
+      - name: Display deployment info
+        run: |
+          echo "🚀 Serverless Backend Deployed Successfully!"
+          echo "📡 API Gateway URL: ${{ steps.outputs.outputs.api_url }}"
+          echo "🔐 User Pool ID: ${{ steps.outputs.outputs.user_pool_id }}"
+          echo "👤 User Pool Client ID: ${{ steps.outputs.outputs.user_pool_client_id }}"
