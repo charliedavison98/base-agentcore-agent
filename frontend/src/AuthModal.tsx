@@ -20,6 +20,8 @@ export default function AuthModal({ visible, onDismiss, onSuccess }: AuthModalPr
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [confirmCode, setConfirmCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -39,6 +41,10 @@ export default function AuthModal({ visible, onDismiss, onSuccess }: AuthModalPr
   };
 
   const handleSignUp = async () => {
+    if (password !== passwordConfirm) {
+      setError('Passwords do not match');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -70,12 +76,15 @@ export default function AuthModal({ visible, onDismiss, onSuccess }: AuthModalPr
   const resetForm = () => {
     setEmail('');
     setPassword('');
+    setPasswordConfirm('');
+    setShowPassword(false);
     setConfirmCode('');
     setMode('signin');
     setError('');
   };
 
-  const handleDismiss = () => {
+  const handleDismiss = ({ detail }: { detail: { reason: string } }) => {
+    if (detail.reason === 'overlay') return;
     resetForm();
     onDismiss();
   };
@@ -134,13 +143,29 @@ export default function AuthModal({ visible, onDismiss, onSuccess }: AuthModalPr
             </FormField>
 
             <FormField label="Password">
-              <Input
-                value={password}
-                onChange={({ detail }) => setPassword(detail.value)}
-                type="password"
-                placeholder="Enter password"
-              />
+              <SpaceBetween size="xs">
+                <Input
+                  value={password}
+                  onChange={({ detail }) => setPassword(detail.value)}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter password"
+                />
+                <Button variant="inline-link" onClick={() => setShowPassword(v => !v)}>
+                  {showPassword ? 'Hide password' : 'Show password'}
+                </Button>
+              </SpaceBetween>
             </FormField>
+
+            {mode === 'signup' && (
+              <FormField label="Confirm Password">
+                <Input
+                  value={passwordConfirm}
+                  onChange={({ detail }) => setPasswordConfirm(detail.value)}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Re-enter password"
+                />
+              </FormField>
+            )}
 
             {mode === 'signin' ? (
               <Box textAlign="center">
