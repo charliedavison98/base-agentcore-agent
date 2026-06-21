@@ -123,6 +123,29 @@ PERMISSION_POLICY=$(cat <<EOF
         "arn:aws:iam::${ACCOUNT_ID}:role/cdk-*-image-publishing-role-${ACCOUNT_ID}-${REGION}",
         "arn:aws:iam::${ACCOUNT_ID}:role/cdk-*-lookup-role-${ACCOUNT_ID}-${REGION}"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "cloudformation:DescribeStacks",
+      "Resource": "arn:aws:cloudformation:*:${ACCOUNT_ID}:stack/*/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*",
+        "arn:aws:s3:::*/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "cloudfront:CreateInvalidation",
+      "Resource": "arn:aws:cloudfront::${ACCOUNT_ID}:distribution/*"
     }
   ]
 }
