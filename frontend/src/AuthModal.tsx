@@ -89,6 +89,11 @@ export default function AuthModal({ visible, onDismiss, onSuccess }: AuthModalPr
     onDismiss();
   };
 
+  const handleCancel = () => {
+    resetForm();
+    onDismiss();
+  };
+
   return (
     <Modal
       visible={visible}
@@ -97,7 +102,7 @@ export default function AuthModal({ visible, onDismiss, onSuccess }: AuthModalPr
       footer={
         <Box float="right">
           <SpaceBetween direction="horizontal" size="xs">
-            <Button variant="link" onClick={handleDismiss}>
+            <Button variant="link" onClick={handleCancel}>
               Cancel
             </Button>
             <Button
