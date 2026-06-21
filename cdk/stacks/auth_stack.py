@@ -16,6 +16,7 @@ class AuthStack(NestedStack):
         construct_id: str,
         stage_name: str,
         project_name: str = "chatbot",
+        additional_callback_urls: list = [],
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -76,12 +77,14 @@ class AuthStack(NestedStack):
                 flows=cognito.OAuthFlows(authorization_code_grant=True),
                 scopes=[cognito.OAuthScope.EMAIL, cognito.OAuthScope.OPENID, cognito.OAuthScope.PROFILE],
                 callback_urls=[
-                    "http://localhost:3000",
-                    "https://localhost:3000",
+                    "http://localhost:5173",
+                    "https://localhost:5173",
+                    *additional_callback_urls,
                 ],
                 logout_urls=[
-                    "http://localhost:3000",
-                    "https://localhost:3000",
+                    "http://localhost:5173",
+                    "https://localhost:5173",
+                    *additional_callback_urls,
                 ],
             ),
         )

@@ -32,6 +32,10 @@ venv.bak/
 
 # Environment variables
 .env
+.env.local
+.env.*.local
+frontend/.env.*
+!frontend/.env.example
 
 # Node.js
 node_modules/**
@@ -40,6 +44,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+package-lock.json
 
 
 # IDE
@@ -58,8 +68,12 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
+# Frontend build output
+frontend/dist/
+frontend/build/
+
 # CDK
-cdk.out/
+cdk.out*
 *.d.ts
 
 # Logs
@@ -78,6 +92,7 @@ coverage.xml
 # Temporary files
 *.tmp
 *.temp
+.cache/
 
 **.venv/**
 **.venv

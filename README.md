@@ -47,4 +47,36 @@ pip install -r requirements.txt
 cdk deploy --context stage={stage}
 ```
 
-Outputs: API Gateway URL, Cognito User Pool ID, Cognito Client ID.
+Outputs: API Gateway URL, Cognito User Pool ID, Cognito Client ID, CloudFront URL, S3 bucket name.
+
+To deploy backend **and** frontend in one go:
+```bash
+./scripts/deploy.sh --stage dev
+```
+
+---
+
+## Frontend
+
+The React frontend (Vite + Cloudscape) is deployed separately after CDK.
+
+### Deploy
+
+```bash
+# 1. Deploy infra (if not already done)
+cd cdk && cdk deploy --context stage=dev
+
+# 2. Build and deploy frontend
+./scripts/deploy_frontend.sh --stage dev
+```
+
+This runs `generate_env.sh` → `build-frontend.sh` → `sync_frontend.sh` in order.
+Re-run step 2 after any frontend change; run both after infra changes.
+
+### Local dev
+
+```bash
+cp frontend/.env.example frontend/.env.local
+# Fill in VITE_API_GATEWAY_URL, VITE_USER_POOL_ID, VITE_USER_POOL_CLIENT_ID
+cd frontend && npm run dev
+```

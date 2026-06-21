@@ -4,6 +4,7 @@ from aws_cdk import Stack, CfnOutput
 from .auth_stack import AuthStack
 from .api_gateway_stack import ApiGatewayStack
 from .agent_stack import AgentStack
+from .frontend_stack import FrontendStack
 
 
 class MainStack(Stack):
@@ -42,9 +43,19 @@ class MainStack(Stack):
             agent_chat_streaming_function=self.agent_stack.agent_chat_streaming_function,
         )
 
-        # Surface key outputs at the main stack level
-        CfnOutput(self, "ApiGatewayUrl", value=self.api.api.url)
+        # Frontend hosting — after ApiGatewayStack so we can wire the /api/* proxy behavior
+        self.frontend_stack = FrontendStack(
+            self,
+            "FrontendStack",
+            stage_name=stage_name,
+            project_name=project_name,
+            api_gateway=self.api.api,
+        )
 
-        # Needed for authentication
+        # Surface key outputs at the main stack level
+        CfnOutput(self, "WebsiteUrl", value=self.frontend_stack.website_url)
+        CfnOutput(self, "ApiGatewayUrl", value=self.api.api.url)
         CfnOutput(self, "UserPoolId", value=self.auth_stack.user_pool.user_pool_id)
         CfnOutput(self, "UserPoolClientId", value=self.auth_stack.user_pool_client.user_pool_client_id)
+        CfnOutput(self, "FrontendBucketName", value=self.frontend_stack.bucket.bucket_name)
+        CfnOutput(self, "CloudFrontDistributionId", value=self.frontend_stack.distribution.distribution_id)
