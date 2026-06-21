@@ -21,7 +21,7 @@ cd cdk && cdk bootstrap --context stage=dev
 ```
 
 ### GitHub Actions (CI/CD)
-The workflow at `.github/workflows/serverless-backend.yml` deploys on push to `main` using OIDC.
+The workflow at `.github/workflows/deploy.yml` deploys backend and frontend on push to `main` using OIDC.
 
 1. **Create the IAM role** using the provided script (minimum permissions — the role can only assume CDK bootstrap roles):
    ```bash

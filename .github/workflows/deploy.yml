@@ -1,4 +1,4 @@
-name: Deploy Serverless Backend
+name: Deploy
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
     paths:
       - 'cdk/**'
       - 'agent/**'
-      - '.github/workflows/serverless-backend.yml'
+      - 'frontend/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 concurrency:
@@ -62,18 +63,12 @@ jobs:
           cd cdk
           cdk deploy SimpleChatbot-${{ env.STAGE }} --context stage=${{ env.STAGE }} --require-approval never
 
-      - name: Get stack outputs
-        id: outputs
-        run: |
-          cd cdk
-          STACK_NAME=SimpleChatbot-${{ env.STAGE }}
-          echo "api_url=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`ApiGatewayUrl`].OutputValue' --output text)" >> $GITHUB_OUTPUT
-          echo "user_pool_id=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`UserPoolId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
-          echo "user_pool_client_id=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`UserPoolClientId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+      - name: Deploy frontend
+        run: ./scripts/deploy_frontend.sh --stage ${{ env.STAGE }}
 
       - name: Display deployment info
         run: |
-          echo "🚀 Serverless Backend Deployed Successfully!"
-          echo "📡 API Gateway URL: ${{ steps.outputs.outputs.api_url }}"
-          echo "🔐 User Pool ID: ${{ steps.outputs.outputs.user_pool_id }}"
-          echo "👤 User Pool Client ID: ${{ steps.outputs.outputs.user_pool_client_id }}"
+          STACK_NAME=SimpleChatbot-${{ env.STAGE }}
+          WEBSITE_URL=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`WebsiteUrl`].OutputValue' --output text)
+          echo "Backend and frontend deployed successfully"
+          echo "Website: $WEBSITE_URL"
