@@ -114,22 +114,17 @@ class AgentStack(NestedStack):
             ]
         )
         
-        # Create AgentCore Runtime with container deployment
-        self.agent_runtime = bedrockagentcore.CfnRuntime(
+        # Create AgentCore Runtime with container deployment and tracing enabled
+        self.agent_runtime = bedrockagentcore.Runtime(
             self,
             "ChatbotAgentRuntime",
-            agent_runtime_name=f"{stage_name}_{project_name}_agentcore_runtime",
-            agent_runtime_artifact=bedrockagentcore.CfnRuntime.AgentRuntimeArtifactProperty(
-                container_configuration=bedrockagentcore.CfnRuntime.ContainerConfigurationProperty(
-                    container_uri=agent_image.image_uri
-                )
-            ),
-            network_configuration=bedrockagentcore.CfnRuntime.NetworkConfigurationProperty(
-                network_mode="PUBLIC"
-            ),
-            protocol_configuration="HTTP",
-            role_arn=agent_role.role_arn,
+            runtime_name=f"{stage_name}_{project_name}_agentcore_runtime",
+            agent_runtime_artifact=bedrockagentcore.AgentRuntimeArtifact.from_image_uri(agent_image.image_uri),
+            network_configuration=bedrockagentcore.RuntimeNetworkConfiguration.using_public_network(),
+            protocol_configuration=bedrockagentcore.ProtocolType.HTTP,
+            execution_role=agent_role,
             description=f"Chatbot Agent for {stage_name} environment",
+            tracing_enabled=True,
             environment_variables={
                 "STAGE": stage_name,
                 "AWS_DEFAULT_REGION": self.region,
@@ -177,7 +172,7 @@ class AgentStack(NestedStack):
             function_name=f"{stage_name}-{project_name}-chat-streaming-lambda",
             role=lambda_role,
             environment={
-                "AGENT_RUNTIME_ARN": self.agent_runtime.attr_agent_runtime_arn,
+                "AGENT_RUNTIME_ARN": self.agent_runtime.agent_runtime_arn,
             },
             timeout=Duration.seconds(300),
             memory_size=512,
@@ -192,7 +187,7 @@ class AgentStack(NestedStack):
             self,
             "AgentRuntimeArn",
             description="ARN of the AgentCore runtime",
-            value=self.agent_runtime.attr_agent_runtime_arn
+            value=self.agent_runtime.agent_runtime_arn
         )
 
         CfnOutput(

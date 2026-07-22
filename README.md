@@ -39,6 +39,19 @@ This application uses [Amazon Bedrock AgentCore Memory](https://docs.aws.amazon.
 cd cdk && cdk bootstrap --context stage=dev
 ```
 
+3. **Enable CloudWatch Transaction Search** (once per account/region) so AgentCore traces/spans appear in the GenAI Observability dashboard:
+   - Open the [CloudWatch console](https://console.aws.amazon.com/cloudwatch/).
+   - In the navigation pane under **Setup**, choose **Settings**.
+   - Select **Account**, then choose the **X-Ray traces** tab.
+   - In the **Transaction Search** section, choose **View settings**.
+   - On the page that opens, choose **Edit**.
+   - Choose **Enable Transaction Search**.
+   - Select **For X-Ray users** and enter the percentage of traces to index. You can index 1% of traces at no cost.
+   - Choose **Save**. Wait until **Ingest OpenTelemetry spans** shows **Enabled** before sending traces.
+
+
+   See the [CloudWatch Transaction Search docs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) for the latest details.
+
 ### GitHub Actions (CI/CD)
 The workflow at `.github/workflows/deploy.yml` deploys the backend and updates the frontend on every push to `main` using OIDC.
 

@@ -17,7 +17,7 @@ class ApiGatewayStack(NestedStack):
         construct_id: str,
         stage_name: str,
         user_pool: cognito.UserPool,
-        agent_runtime: bedrockagentcore.CfnRuntime,
+        agent_runtime: bedrockagentcore.Runtime,
         agent_chat_streaming_function: _lambda.IFunction,
         project_name: str,
         **kwargs
