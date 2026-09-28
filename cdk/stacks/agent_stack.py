@@ -118,7 +118,7 @@ class AgentStack(NestedStack):
         self.agent_runtime = bedrockagentcore.Runtime(
             self,
             "ChatbotAgentRuntime",
-            runtime_name=f"{stage_name}_{project_name}_agentcore_runtime",
+            runtime_name=f"{stage_name}_{project_name}_runtime",
             agent_runtime_artifact=bedrockagentcore.AgentRuntimeArtifact.from_image_uri(agent_image.image_uri),
             network_configuration=bedrockagentcore.RuntimeNetworkConfiguration.using_public_network(),
             protocol_configuration=bedrockagentcore.ProtocolType.HTTP,
